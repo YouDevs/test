@@ -4,11 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const monthSelect = document.getElementById("month");
     const yearSelect = document.getElementById("year");
     const countInput = document.getElementById("count");
+    const lastEntryBox = document.getElementById("last-entry");
     const chartCanvas = document.getElementById("practice-chart");
 
     let selectedMonth, selectedYear, myChart;
 
-    // Default topics for each month
     const defaultTopics = {
         Arrays: 0,
         Strings: 0,
@@ -17,21 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Other: 0,
     };
 
-    // Object storing practice data in memory (no persistence)
-    const practice = {
-        January:   { ...defaultTopics },
-        February:  { ...defaultTopics },
-        March:     { ...defaultTopics },
-        April:     { ...defaultTopics },
-        May:       { ...defaultTopics },
-        June:      { ...defaultTopics },
-        July:      { ...defaultTopics },
-        August:    { ...defaultTopics },
-        September: { ...defaultTopics },
-        October:   { ...defaultTopics },
-        November:  { ...defaultTopics },
-        December:  { ...defaultTopics },
-    };
+    const practice = {};
 
     const months = [
         "January","February","March","April","May","June",
@@ -46,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         monthSelect.appendChild(opt);
     });
 
-    // Populate year dropdown (still used even without persistence)
+    // Populate year dropdown
     for (let y = 2020; y <= 2040; y++) {
         const option = document.createElement("option");
         option.value = y;
@@ -54,12 +40,24 @@ document.addEventListener("DOMContentLoaded", () => {
         yearSelect.appendChild(option);
     }
 
-    // Update chart using only memory data
+    // Load from LocalStorage
+    function load(month, year) {
+        const key = `practice-${month}-${year}`;
+        return JSON.parse(localStorage.getItem(key)) || { ...defaultTopics };
+    }
+
+    // Save to LocalStorage
+    function save(month, year, data) {
+        const key = `practice-${month}-${year}`;
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    // Update chart
     function updateChart() {
         selectedMonth = monthSelect.value;
         selectedYear = yearSelect.value;
 
-        const data = practice[selectedMonth];
+        const data = load(selectedMonth, selectedYear);
 
         const ctx = chartCanvas.getContext("2d");
 
@@ -73,11 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     {
                         data: Object.values(data),
                         backgroundColor: [
-                            "#3b82f6", // Arrays
-                            "#22c55e", // Strings
-                            "#ef4444", // Recursion
-                            "#eab308", // OOP
-                            "#a855f7", // Other
+                            "#3b82f6",
+                            "#22c55e",
+                            "#ef4444",
+                            "#eab308",
+                            "#a855f7",
                         ],
                     },
                 ],
@@ -93,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Handle form submission (no persistence)
+    // Handle submit
     form.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -108,22 +106,22 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Update in-memory practice data
-        practice[month][topic] += count;
+        const currentData = load(month, year);
+        currentData[topic] += count;
 
-        // Update the chart
+        save(month, year, currentData);
         updateChart();
 
-        // Reset input
+        lastEntryBox.textContent = `Last entry: ${day} ${month} ${year} — ${topic} (${count} exercises)`;
+
         countInput.value = "";
     });
 
-    // Set default month/year/day to current date
-    // const now = new Date();
-    // monthSelect.value = months[now.getMonth()];
-    // yearSelect.value = now.getFullYear();
-    // dayInput.value = now.getDate();
+    // Default month/year
+    const now = new Date();
+    monthSelect.value = months[now.getMonth()];
+    yearSelect.value = now.getFullYear();
+    dayInput.value = now.getDate();
 
-    // Initial chart
     updateChart();
 });
