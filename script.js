@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // 1. Rellenar el select de meses
     monthSelect = document.getElementById("month");
+    yearSelect = document.getElementById("year")
+
 
     const months = [
         "January","February","March","April","May","June",
@@ -14,4 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
         opt.textContent = m;
         monthSelect.appendChild(opt);
     } )
+
+    for (let y = 2024; y <= 2040; y++) {
+        const option = document.createElement("option");
+        option.value = y;
+        option.textContent = y;
+        yearSelect.appendChild(option);
+    }
 });
