@@ -110,9 +110,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update in-memory practice data
         practice[month][topic] += count;
-        console.log(practice)
 
+        // Update the chart
+        updateChart();
+
+        // Reset input
+        countInput.value = "";
     });
+
+    // Set default month/year/day to current date
+    // const now = new Date();
+    // monthSelect.value = months[now.getMonth()];
+    // yearSelect.value = now.getFullYear();
+    // dayInput.value = now.getDate();
 
     // Initial chart
     updateChart();
