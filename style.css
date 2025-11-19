@@ -92,3 +92,11 @@ input:focus, select:focus {
     cursor: pointer;
     transition: transform 0.05s ease-in-out;
 }
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #4f46e5, #4338ca);
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
